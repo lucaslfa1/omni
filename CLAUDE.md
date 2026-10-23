@@ -17,7 +17,12 @@ A plugin and skill pack, and its own project. The skills belong to omni.
 - **After editing the standalone version:**
   1. Run `python scripts/build.py --install`.
   2. Upload `dist/<name>.zip` to claude.ai, ChatGPT, and the Gemini app. claude.ai asks before replacing and keeps a version history. In ChatGPT and Gemini, replacing means editing or recreating the skill there.
-- **After editing the plugin version:** run `claude plugin validate . --strict`.
+- **After editing the plugin version:**
+  1. Raise `version` in `plugin.json` and in `marketplace.json`.
+  2. Run `claude plugin validate . --strict`.
+- **Releases:** attach `dist/<name>.zip` to a GitHub release (`gh release create vX.Y.Z dist/<name>.zip`). The website's download button points to `releases/latest`.
+- **Website:** `docs/index.html`, served by GitHub Pages at https://lucaslfa1.github.io/omni/.
+- **No binaries in the repo**, so no `.zip`: the plugin folder is the repo root, and Anthropic's directory holds binaries for a reviewer.
 
 ## Rules
 

@@ -1,6 +1,6 @@
 {
   "name": "omni",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "explain: X-ray any topic into a visual explainer, from your project's architecture to a concept or a process.",
   "author": {
     "name": "Lucas Felipe Afonso",
@@ -8,5 +8,5 @@
   },
   "license": "MIT",
   "repository": "https://github.com/lucaslfa1/omni",
-  "homepage": "https://github.com/lucaslfa1/omni"
+  "homepage": "https://lucaslfa1.github.io/omni/"
 }

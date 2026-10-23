@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>explain · omni</title>
+<meta name="description" content="explain: X-ray any topic into a visual explainer. A free agent skill for Claude, ChatGPT, Gemini, Codex, and Antigravity.">
+<meta property="og:title" content="explain · omni">
+<meta property="og:description" content="X-ray any topic into a visual explainer. Free agent skill for Claude, ChatGPT, Gemini, Codex, and Antigravity.">
+<style>
+:root {
+  --bg: #f7f8fb; --fg: #10131a; --muted: #5b6475; --card: #ffffff; --border: #e3e6ee;
+  --accent: #4f46e5; --accent-2: #0ea5e9; --accent-soft: #eef0ff; --code: #f1f3f8;
+  --ok: #059669; --warn: #b45309; --idle: #64748b;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0d12; --fg: #e8ebf2; --muted: #98a1b3; --card: #12151d; --border: #232836;
+    --accent: #8b85ff; --accent-2: #38bdf8; --accent-soft: #1b1d33; --code: #171b25;
+    --ok: #34d399; --warn: #fbbf24; --idle: #94a3b8;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
+.logo { font-weight: 800; letter-spacing: -0.02em; font-size: 20px; color: var(--fg); }
+.logo span { color: var(--accent); }
+nav .links a { color: var(--muted); margin-left: 20px; font-size: 15px; }
+
+.hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; padding: 40px 0 64px; }
+.eyebrow { display: inline-block; font-size: 13px; font-weight: 600; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 999px; }
+h1 { font-size: clamp(36px, 6vw, 60px); line-height: 1.05; letter-spacing: -0.035em; margin: 16px 0; }
+h1 .grad { background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lead { font-size: 18px; color: var(--muted); max-width: 34em; }
+.cta { display: flex; gap: 12px; flex-wrap: wrap; margin: 28px 0 14px; }
+.btn { display: inline-block; padding: 11px 18px; border-radius: 10px; font-weight: 600; border: 1px solid var(--border); color: var(--fg); background: var(--card); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:hover { text-decoration: none; filter: brightness(1.05); }
+.small { font-size: 14px; color: var(--muted); }
+
+/* hero illustration: a small org chart with status tags */
+.chart { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(16,19,26,.06); }
+.chart .row { display: flex; justify-content: center; gap: 10px; position: relative; }
+.chart .row + .row { margin-top: 26px; }
+.node { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; text-align: center; position: relative; min-width: 84px; }
+.node small { display: block; font-weight: 500; margin-top: 4px; }
+.row.kids::before { content: ""; position: absolute; top: -14px; left: 16%; right: 16%; border-top: 2px solid var(--border); }
+.row.kids .node::before { content: ""; position: absolute; top: -14px; left: 50%; height: 14px; border-left: 2px solid var(--border); }
+.row.mid .node::after, .row.top .node::after { content: ""; position: absolute; bottom: -14px; left: 50%; height: 12px; border-left: 2px solid var(--border); }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 999px; border: 1px solid currentColor; }
+.tag.live { color: var(--ok); } .tag.behind { color: var(--warn); } .tag.unv { color: var(--idle); } .tag.acc { color: var(--accent); }
+
+section { padding: 56px 0; border-top: 1px solid var(--border); }
+h2 { font-size: clamp(26px, 4vw, 34px); letter-spacing: -0.02em; margin: 0 0 8px; }
+.sub { color: var(--muted); margin: 0 0 28px; }
+.grid { display: grid; gap: 14px; }
+.g3 { grid-template-columns: repeat(3, 1fr); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+.card h3 { margin: 12px 0 4px; font-size: 17px; }
+.card p { margin: 0; color: var(--muted); font-size: 15px; }
+
+/* shape glyphs */
+.glyph { height: 44px; display: flex; align-items: center; gap: 4px; }
+.glyph i { display: block; background: var(--accent); opacity: .85; border-radius: 3px; }
+.g-org { flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+.g-org .r { display: flex; gap: 5px; } .g-org i { width: 14px; height: 9px; }
+.g-flow i { width: 18px; height: 12px; } .g-flow b { color: var(--accent); font-size: 12px; }
+.g-layers { flex-direction: column; align-items: flex-start; justify-content: center; gap: 3px; } .g-layers i { width: 64px; height: 7px; }
+.g-vs i { width: 26px; height: 34px; opacity: .55; } .g-vs i + i { opacity: .9; }
+.g-time { position: relative; width: 90px; } .g-time::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px solid var(--accent); opacity: .5; }
+.g-time i { width: 9px; height: 9px; border-radius: 50%; position: relative; margin-right: 12px; }
+.g-tree { flex-direction: column; align-items: flex-start; justify-content: center; gap: 3px; } .g-tree i { height: 7px; width: 40px; } .g-tree i:nth-child(2), .g-tree i:nth-child(3) { margin-left: 14px; width: 30px; } .g-tree i:nth-child(3) { margin-left: 28px; width: 22px; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+
+/* install */
+.inst { display: grid; gap: 14px; grid-template-columns: repeat(3, 1fr); }
+.inst .where { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
+.cmd { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--code); border: 1px solid var(--border); border-radius: 10px; padding: 9px 10px 9px 12px; margin-top: 10px; }
+.cmd code { font-size: 13px; overflow-x: auto; white-space: nowrap; }
+.copy { flex: none; font: 600 12px/1 inherit; font-family: inherit; color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 7px; padding: 6px 8px; cursor: pointer; }
+.copy:hover { color: var(--fg); }
+.then { font-size: 14px; color: var(--muted); margin-top: 10px; }
+
+footer { border-top: 1px solid var(--border); padding: 28px 0 40px; color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; padding-top: 20px; }
+  .g3, .inst { grid-template-columns: 1fr; }
+}
+@media (max-width: 420px) {
+  nav .links a { margin-left: 14px; }
+  .node { min-width: 0; padding: 7px 8px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <div class="logo">omni<span>.</span></div>
+    <div class="links">
+      <a href="#install">Install</a>
+      <a href="https://github.com/lucaslfa1/omni">GitHub</a>
+      <a href="https://www.instagram.com/lucas_lfa/">Instagram</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <span class="eyebrow">omni skill · explain</span>
+      <h1>X-ray <span class="grad">any topic.</span></h1>
+      <p class="lead">explain turns your project's architecture, a codebase, a concept, a technology, or a process into a visual explainer. A diagram sits at the core, every fact is checked, and anything that could not be checked is marked.</p>
+      <div class="cta">
+        <a class="btn primary" href="#install">Install it free</a>
+        <a class="btn" href="https://github.com/lucaslfa1/omni">View on GitHub</a>
+      </div>
+      <p class="small">Works in Claude, ChatGPT, Gemini, Codex, Antigravity, and Cursor. MIT license.</p>
+    </div>
+    <div class="chart" aria-label="Illustration: an org chart with status tags">
+      <div class="row top"><div class="node">You<small><span class="tag acc">decides</span></small></div></div>
+      <div class="row mid"><div class="node">repository<small><span class="tag live">main</span></small></div></div>
+      <div class="row kids">
+        <div class="node">web<small><span class="tag live">live</span></small></div>
+        <div class="node">api<small><span class="tag behind">3 behind</span></small></div>
+        <div class="node">jobs<small><span class="tag unv">unverified</span></small></div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <h2>It picks the right shape</h2>
+    <p class="sub">The diagram follows the topic, not a template.</p>
+    <div class="grid g3">
+      <div class="card"><div class="glyph g-org"><div class="r"><i></i></div><div class="r"><i></i><i></i><i></i></div></div><h3>Org chart</h3><p>Projects, systems, and deployments: who decides, then the repository, environments, and components.</p></div>
+      <div class="card"><div class="glyph g-flow"><i></i><b>→</b><i></i><b>→</b><i></i><b>→</b><i></i></div><h3>Flow</h3><p>Processes, pipelines, and the path a request takes.</p></div>
+      <div class="card"><div class="glyph g-layers"><i></i><i style="width:52px"></i><i style="width:40px"></i><i style="width:28px"></i></div><h3>Layers</h3><p>Stacked concepts, such as a network stack or a transformer.</p></div>
+      <div class="card"><div class="glyph g-vs"><i></i><i></i></div><h3>Side by side</h3><p>A versus B, with differences lined up.</p></div>
+      <div class="card"><div class="glyph g-time"><i></i><i></i><i></i><i></i></div><h3>Timeline</h3><p>History and how something evolved.</p></div>
+      <div class="card"><div class="glyph g-tree"><i></i><i></i><i></i></div><h3>Tree</h3><p>Hierarchies and taxonomies.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Honest by design</h2>
+    <p class="sub">An explainer is only useful if you can trust it.</p>
+    <div class="grid g3">
+      <div class="card"><h3>Checks before it claims</h3><p>For a project, it reads the repository and runs read-only status commands. Anything recent or numeric gets a primary source and a link.</p></div>
+      <div class="card"><h3>Marks what it can't confirm</h3><p>Every part carries a tag, so vision never passes for shipped code.</p>
+        <div class="tags"><span class="tag live">live</span><span class="tag behind">N commits behind</span><span class="tag behind">blocked</span><span class="tag acc">vision</span><span class="tag unv">unverified</span><span class="tag live">settled</span><span class="tag behind">debated</span></div></div>
+      <div class="card"><h3>Read-only</h3><p>It never deploys, changes, or deletes anything. The only thing it writes is the explainer page.</p></div>
+    </div>
+  </section>
+
+  <section id="install">
+    <h2>Install</h2>
+    <p class="sub">Free and open source. Pick where you work.</p>
+    <div class="inst">
+      <div class="card">
+        <div class="where">Claude Code</div>
+        <div class="cmd"><code>/plugin marketplace add lucaslfa1/omni</code><button class="copy">Copy</button></div>
+        <div class="cmd"><code>/plugin install omni@omni</code><button class="copy">Copy</button></div>
+        <p class="then">Then ask it to explain something, or type <code>/omni:explain</code>.</p>
+      </div>
+      <div class="card">
+        <div class="where">Codex · Antigravity · Cursor</div>
+        <div class="cmd"><code>npx skills add lucaslfa1/omni --skill explain</code><button class="copy">Copy</button></div>
+        <p class="then">Works in any agent that reads the open Agent Skills format.</p>
+      </div>
+      <div class="card">
+        <div class="where">claude.ai · ChatGPT · Gemini</div>
+        <a class="btn primary" style="margin-top:10px" href="https://github.com/lucaslfa1/omni/releases/latest/download/explain.zip">Download explain.zip</a>
+        <p class="then">Upload it on the app's Skills page, then type <code>/explain</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Made by Lucas Felipe Afonso · <a href="https://www.instagram.com/lucas_lfa/">@lucas_lfa</a></span>
+    <span><a href="https://github.com/lucaslfa1/omni">GitHub</a> · MIT License</span>
+  </footer>
+</div>
+<script>
+document.querySelectorAll('.copy').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var text = b.previousElementSibling.textContent;
+    var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1400); };
+    if (navigator.clipboard) { navigator.clipboard.writeText(text).then(done, done); } else { done(); }
+  });
+});
+</script>
+</body>
+</html>
