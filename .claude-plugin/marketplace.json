@@ -1,0 +1,17 @@
+{
+  "name": "omni",
+  "owner": {
+    "name": "Lucas Felipe Afonso"
+  },
+  "metadata": {
+    "description": "The omni skills for Claude.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "omni",
+      "source": "./",
+      "description": "explain: X-ray any topic into a visual explainer, from your project's architecture to a concept or a process."
+    }
+  ]
+}
